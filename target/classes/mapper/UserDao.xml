@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.star.getuser.dao.UserDao">
+
+    <resultMap type="com.star.getuser.entity.User" id="WebuserMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="pId" column="p_id" jdbcType="INTEGER"/>
+        <result property="rebate" column="rebate" jdbcType="INTEGER"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="nickname" column="nickname" jdbcType="VARCHAR"/>
+        <result property="createtime" column="createTime" jdbcType="INTEGER"/>
+        <result property="sex" column="sex" jdbcType="INTEGER"/>
+        <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+        <result property="isvip" column="isVip" jdbcType="VARCHAR"/>
+        <result property="phonenumber" column="phoneNumber" jdbcType="INTEGER"/>
+        <result property="actionnum" column="actionNum" jdbcType="INTEGER"/>
+        <result property="lastlogin" column="lastLogin" jdbcType="INTEGER"/>
+        <result property="ip" column="ip" jdbcType="VARCHAR"/>
+        <result property="gptfreenum" column="gptFreeNum" jdbcType="INTEGER"/>
+        <result property="mjfreenum" column="mjFreeNum" jdbcType="INTEGER"/>
+        <result property="mjactionnum" column="mjActionNum" jdbcType="INTEGER"/>
+        <result property="usersource" column="userSource" jdbcType="VARCHAR"/>
+        <result property="uuid" column="uuid" jdbcType="INTEGER"/>
+        <result property="signdate" column="signDate" jdbcType="INTEGER"/>
+        <result property="fastnum" column="fastNum" jdbcType="INTEGER"/>
+        <result property="gpt4freenum" column="gpt4FreeNum" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="getAll" resultMap="WebuserMap">
+        select
+          id, p_id, rebate, username, password, nickname, createTime, sex, avatar, isVip, phoneNumber, actionNum, lastLogin, ip, gptFreeNum, mjFreeNum, mjActionNum, userSource, uuid, signDate, fastNum, gpt4FreeNum
+        from webuser
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from webuser
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="pId != null">
+                and p_id = #{pId}
+            </if>
+            <if test="rebate != null">
+                and rebate = #{rebate}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="nickname != null and nickname != ''">
+                and nickname = #{nickname}
+            </if>
+            <if test="createtime != null">
+                and createTime = #{createtime}
+            </if>
+            <if test="sex != null">
+                and sex = #{sex}
+            </if>
+            <if test="avatar != null and avatar != ''">
+                and avatar = #{avatar}
+            </if>
+            <if test="isvip != null and isvip != ''">
+                and isVip = #{isvip}
+            </if>
+            <if test="phonenumber != null">
+                and phoneNumber = #{phonenumber}
+            </if>
+            <if test="actionnum != null">
+                and actionNum = #{actionnum}
+            </if>
+            <if test="lastlogin != null">
+                and lastLogin = #{lastlogin}
+            </if>
+            <if test="ip != null and ip != ''">
+                and ip = #{ip}
+            </if>
+            <if test="gptfreenum != null">
+                and gptFreeNum = #{gptfreenum}
+            </if>
+            <if test="mjfreenum != null">
+                and mjFreeNum = #{mjfreenum}
+            </if>
+            <if test="mjactionnum != null">
+                and mjActionNum = #{mjactionnum}
+            </if>
+            <if test="usersource != null and usersource != ''">
+                and userSource = #{usersource}
+            </if>
+            <if test="uuid != null">
+                and uuid = #{uuid}
+            </if>
+            <if test="signdate != null">
+                and signDate = #{signdate}
+            </if>
+            <if test="fastnum != null">
+                and fastNum = #{fastnum}
+            </if>
+            <if test="gpt4freenum != null">
+                and gpt4FreeNum = #{gpt4freenum}
+            </if>
+        </where>
+    </select>
+    <select id="getCreateTime" resultType="com.star.getuser.entity.po.count">
+        SELECT COUNT(id) AS count, DATE_FORMAT(FROM_UNIXTIME(createTime/1000),"%Y-%m-%d") AS date
+        FROM webuser
+        WHERE
+        <choose>
+            <when test="timeRange == 'week'">
+                createTime >= UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 1 WEEK))
+            </when>
+            <when test="timeRange == 'month'">
+                createTime >= UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+            </when>
+            <when test="timeRange == 'month3'">
+                createTime >= UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 3 MONTH))
+            </when>
+            <when test="timeRange == 'month6'">
+                createTime >= UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 6 MONTH))
+            </when>
+            <otherwise>
+                createTime > UNIX_TIMESTAMP(NOW())
+            </otherwise>
+        </choose>
+        GROUP BY date
+    </select>
+
+
+
+</mapper>
+
