@@ -154,7 +154,7 @@
 
         }
         function getInfo() {
-            axios.get('http://localhost:8081/user/getCreateTime/' + timeRange).then(res => {
+            axios.get('http://https://xxcc.zeabur.app/user/getCreateTime/' + timeRange).then(res => {
                 option.xAxis.data = res.data.data.date
                 option.series[0].data = res.data.data.count
                 myEharts.setOption(option)
@@ -184,7 +184,7 @@
             }]
         }
 
-        axios.get('http://localhost:8081/user/compare').then(res => {
+        axios.get('http://https://xxcc.zeabur.app/user/compare').then(res => {
             compare.xAxis.data = res.data.data.month
             compare.series[0].data = res.data.data.num
             compareChart.setOption(compare)
@@ -236,7 +236,7 @@
 
 
 
-        axios.get('http://localhost:8081/user/getSource').then(res => {
+        axios.get('http://https://xxcc.zeabur.app/user/getSource').then(res => {
             // console.log(res.data)
             const sourceCount = res.data.sourceCount;
             options.yAxis.data = res.data.data.categories
