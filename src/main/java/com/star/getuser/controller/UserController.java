@@ -18,6 +18,11 @@ public class UserController {
     @Autowired
     public UserService userService;
 
+    @GetMapping
+    public String getUser(){
+        return "user.html";
+    }
+
     @GetMapping("/getAll")
     public List<User> getAll(){
         return userService.getAll();
