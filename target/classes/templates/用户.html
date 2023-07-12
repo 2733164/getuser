@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图表</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="../js/echarts.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .change {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            top: 20px;
+            left: 260px;
+            width: 100px;
+            height: 160px;
+        }
+
+        .change .btn {
+            border: 1px solid #d87c7c;
+            border-radius: 5px;
+            text-align: center;
+            margin: 5px 0;
+            height: 30px;
+            color: #d87c7c;
+            background-color: #fff;
+        }
+
+        .change .btn:hover {
+            color: #fff;
+            background-color: #efa18d;
+        }
+
+        .change .btn.active {
+            color: #fff;
+            background-color: #d87c7c;
+        }
+
+        .time {
+            position: absolute;
+            top: 20px;
+            left: 120px;
+            width: 95px;
+            height: 25px;
+            font-size: 14px;
+            color: #444;
+            border: 1px solid rgb(135, 183, 235);
+            outline: none;
+        }
+
+        .time:focus {
+            border: 1px solid rgb(0, 140, 255);
+            outline: none;
+        }
+
+        #userCreatTime,
+        #compare {
+            margin: 20px auto;
+            width: 1000px;
+            height: 400px;
+        }
+
+        #userInfo {
+            margin: 20px auto;
+            width: 1000px;
+            height: 600px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- <select name="time" class="time" onchange="handleTimeChange(event)">
+        <option value="week">最近一周</option>
+        <option value="month">最近一个月</option>
+        <option value="month3">最近三个月</option>
+        <option value="month6">最近半年</option>
+    </select> -->
+    <div class="change" onclick="handleTimeChange(event)">
+        <button class="btn active" value='week'>最近一周</button>
+        <button class="btn" value='month'>最近一个月</button>
+        <button class="btn" value='month3'>最近三个月</button>
+        <button class="btn" value='month6'>最近半年</button>
+    </div>
+    <div id="userCreatTime"></div>
+    <div id="compare"></div>
+    <div id="userInfo"></div>
+    <script>
+        const btn = document.querySelectorAll('.btn')
+        // console.log(btn)
+        for (let i = 0; i < btn.length; i++) {
+            btn[i].addEventListener('click', function () {
+                document.querySelector('.active').classList.remove('active')
+                this.classList.add('active')
+            })
+        }
+
+        // ------------------------------------------------------------------------------------------
+        const myEharts = echarts.init(document.querySelector('#userCreatTime'), 'rgba(254,248,239,1)')
+
+        const option = {
+            color: ['#efa18d'],
+            title: {
+                text: "创建时间"
+            },
+            tooltip: {},
+            legend: {
+                data: '人数'
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+
+            },
+            xAxis: {
+                data: []
+            },
+            yAxis: {},
+            series: [{
+                name: '人数',
+                type: 'line',
+                smooth: true,
+                data: []
+            }],
+        }
+        var timeRange = 'week'
+        getInfo()
+
+        function handleTimeChange(e) {
+            // console.log(e.target)
+            timeRange = e.target.value;
+            e.stopPropagation();
+            if (timeRange === undefined) {
+                timeRange = 'week'
+                document.querySelector('.active').classList.remove('active')
+                document.querySelectorAll('.btn')[0].classList.add('active')
+            }
+            getInfo()
+
+        }
+        function getInfo() {
+            axios.get('http://localhost:8081/user/getCreateTime/' + timeRange).then(res => {
+                option.xAxis.data = res.data.data.date
+                option.series[0].data = res.data.data.count
+                myEharts.setOption(option)
+            })
+        }
+
+        // --------------------------------------------------------------------------------------------------------------
+        const compareChart = echarts.init(document.querySelector('#compare'))
+
+        const compare = {
+            title: {
+                text: "每月人数"
+            },
+            color: ['#ffb248'],
+            tooltip: {},
+            legend: {
+                data: '人数'
+            },
+            xAxis: {
+                data: []
+            },
+            yAxis: {},
+            series: [{
+                name: '人数',
+                type: 'bar',
+                data: []
+            }]
+        }
+
+        axios.get('http://localhost:8081/user/compare').then(res => {
+            compare.xAxis.data = res.data.data.month
+            compare.series[0].data = res.data.data.num
+            compareChart.setOption(compare)
+        })
+
+
+
+
+        // --------------------------------------------------------------------------
+        const myChart = echarts.init(document.querySelector('#userInfo'))
+
+        options = {
+            color: ['#93b7e3'],
+            xAxis: {
+                max: 'dataMax'
+            },
+            yAxis: {
+                type: 'category',
+                data: [],
+                inverse: true,
+                animationDuration: 300,
+                animationDurationUpdate: 300,
+                max: 5
+            },
+            series: [
+                {
+                    realtimeSort: true,
+                    name: '人数',
+                    type: 'bar',
+                    data: [],
+                    label: {
+                        show: true,
+                        position: 'right',
+                        valueAnimation: true
+                    }
+                }
+            ],
+            legend: {
+                show: true
+            },
+            grid: {
+                left: 150
+            },
+            animationDuration: 3000,
+            animationDurationUpdate: 3000,
+            animationEasing: 'linear',
+            animationEasingUpdate: 'linear'
+        };
+
+
+
+        axios.get('http://localhost:8081/user/getSource').then(res => {
+            // console.log(res.data)
+            const sourceCount = res.data.sourceCount;
+            options.yAxis.data = res.data.data.categories
+            options.series[0].data = res.data.data.sourceCount
+            myChart.setOption(options);
+        })
+
+
+
+    </script>
+</body>
+
+</html>
