@@ -30,13 +30,13 @@
     <select id="getAll" resultMap="WebuserMap">
         select
           id, p_id, rebate, username, password, nickname, createTime, sex, avatar, isVip, phoneNumber, actionNum, lastLogin, ip, gptFreeNum, mjFreeNum, mjActionNum, userSource, uuid, signDate, fastNum, gpt4FreeNum
-        from webuser
+        from webUser
     </select>
 
     <!--统计总行数-->
     <select id="count" resultType="java.lang.Long">
         select count(1)
-        from webuser
+        from webUser
         <where>
             <if test="id != null">
                 and id = #{id}
@@ -108,7 +108,7 @@
     </select>
     <select id="getCreateTime" resultType="com.star.getuser.entity.po.count">
         SELECT COUNT(id) AS count, DATE_FORMAT(FROM_UNIXTIME(createTime/1000),"%Y-%m-%d") AS date
-        FROM webuser
+        FROM webUser
         WHERE
         <choose>
             <when test="timeRange == 'week'">
