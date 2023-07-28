@@ -140,8 +140,8 @@
 
         }
         function getInfo() {
-            // axios.get('https://xxcc.zeabur.app/user/getCreateTime/' + timeRange).then(res => {
-            axios.get('http://localhost:8081/user/getCreateTime/' + timeRange).then(res => {
+            axios.get('https://xxcc.zeabur.app/user/getCreateTime/' + timeRange).then(res => {
+            // axios.get('http://localhost:8081/user/getCreateTime/' + timeRange).then(res => {
                 option.xAxis.data = res.data.data.date
                 option.series[0].data = res.data.data.count
                 myEharts.setOption(option)
